@@ -20,7 +20,20 @@ namespace InMemoryApp.Web.Controllers
             
             if(!_memoryCache.TryGetValue("zaman", out string zamanCache))
             {
-                _memoryCache.Set<string>("zaman", DateTime.Now.ToString());
+                MemoryCacheEntryOptions cacheOptions = new MemoryCacheEntryOptions();
+                /*
+                 *  Bu sekilde oldugunda 10 saniye icinde dataya erismeye calısırsak
+                 *  dataya erisim saglayabilecegiz, fakat bunu max 1 dk icinde yapabilirz
+                 *  cunku absoluteExpiration'un suresi 1dk 
+                 *  
+                 *  Not: SlidingExpiration u yalniz kullanabilirsin
+                 */
+
+
+                cacheOptions.AbsoluteExpiration = DateTime.Now.AddMinutes(1);
+                cacheOptions.SlidingExpiration = TimeSpan.FromSeconds(10);
+
+                _memoryCache.Set<string>("zaman", DateTime.Now.ToString(), cacheOptions);
             }
             return View();
         }
@@ -29,11 +42,13 @@ namespace InMemoryApp.Web.Controllers
         {
             //_memoryCache.Remove("zaman");
 
-            //zaman'i almaya calis, yoksa olustur (datetime.now ile)
-            _memoryCache.GetOrCreate("zaman", option =>
-            {
-                return DateTime.Now.ToString();
-            });
+            /*
+             *  zaman'i almaya calis, yoksa olustur (datetime.now ile)
+                _memoryCache.GetOrCreate("zaman", option =>
+                {
+                    return DateTime.Now.ToString();
+                });
+            */
             ViewBag.zaman = _memoryCache.Get<string>("zaman");
             return View();
         }
