@@ -45,6 +45,17 @@ namespace InMemoryApp.Web.Controllers
                  */
                 cacheOptions.Priority = CacheItemPriority.NeverRemove;
 
+                /*
+                 * Memory den silinen datalarin hangi sebeple silindigini RegisterPostEvictionCallback
+                 * ile anlayabiliriz.
+                 * Ornegin, AbsoluteExpiration ile suresi dolmus datalar silindiginde, silinme sebebi olarak
+                 * "Expired (süresi bitti)" sebebini aliriz
+                 */
+                cacheOptions.RegisterPostEvictionCallback((key, value, reason, state) =>
+                {
+                    _memoryCache.Set("callback", $"{key}->{value} => sebep: {reason}");
+                });
+
                 _memoryCache.Set<string>("zaman", DateTime.Now.ToString(), cacheOptions);
             }
             return View();
@@ -62,6 +73,8 @@ namespace InMemoryApp.Web.Controllers
                 });
             */
             ViewBag.zaman = _memoryCache.Get<string>("zaman");
+            _memoryCache.TryGetValue("callback", out string callback);
+            ViewBag.callback = _memoryCache.Get<string>("callback");
             return View();
         }
     }
