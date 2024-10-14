@@ -28,10 +28,22 @@ namespace InMemoryApp.Web.Controllers
                  *  
                  *  Not: SlidingExpiration u yalniz kullanabilirsin
                  */
-
-
                 cacheOptions.AbsoluteExpiration = DateTime.Now.AddMinutes(1);
                 cacheOptions.SlidingExpiration = TimeSpan.FromSeconds(10);
+
+                /*
+                 * CacheItemPriority ile 4 tane oncelik geliyor
+                 * Oncelik siralamasina gore -> NeverRemove > High > Normal > Low
+                 * 
+                 * NeverRemove = Memory dolsa bile ASLA silme
+                 * High = Onemli veri, silme
+                 * Normal = Low ve High arasinde onem derecesi
+                 * Low = Onemsiz veri silebilirsin
+                 * 
+                 * NeverRemove'de exception sikintisi olabilir. Memory doldugunda silemeyecegi icin exp firlatir
+                 * Onun disinda exp problemi olmaz
+                 */
+                cacheOptions.Priority = CacheItemPriority.NeverRemove;
 
                 _memoryCache.Set<string>("zaman", DateTime.Now.ToString(), cacheOptions);
             }
