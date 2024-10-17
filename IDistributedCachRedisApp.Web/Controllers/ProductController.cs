@@ -66,5 +66,21 @@ namespace IDistributedCachRedisApp.Web.Controllers
 
             return View();
         }
+
+        public IActionResult ImageCach()
+        {
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/trabzon.jpg");
+
+            byte[] imageByte = System.IO.File.ReadAllBytes(path);
+
+            _distributedCache.Set("trabzon", imageByte);
+            return View();
+        }
+
+        public IActionResult ImageUrl()
+        {
+            byte[] imageByte = _distributedCache.Get("trabzon");
+            return File(imageByte, "image/jpg");
+        }
     }
 }
