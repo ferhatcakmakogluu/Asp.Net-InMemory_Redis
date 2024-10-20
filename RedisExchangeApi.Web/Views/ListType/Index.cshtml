@@ -1,0 +1,20 @@
+﻿@model List<string>
+
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<h1>List Actions</h1>
+
+<form asp-action="Add" asp-controller="ListType" method="post" enctype="application/x-www-form-urlencoded">
+    <input type="text" name="name" />
+    <button type="submit">Kaydet</button>
+</form>
+
+<a asp-controller="ListType" asp-action="DeleteFirstItem">Bastan sil</a>
+
+@foreach(var item in Model)
+{
+    <h2>@item - <a asp-controller="ListType" asp-action="DeleteItem" asp-route-name="@item">Sil</a></h2>
+}
